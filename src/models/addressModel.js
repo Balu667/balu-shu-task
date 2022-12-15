@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");  // --> mongoose module is imported
-const objectId = mongoose.Schema.Types.ObjectId  // --> syntax to refer an objectId to a key in schema
 
 // to define a format (schema) for creating an intern in the database
 const addressSchema = new mongoose.Schema(
@@ -18,14 +17,7 @@ const addressSchema = new mongoose.Schema(
       required: true,
     
     },
-   userId: {
-        type: objectId,
-        ref: "user",
-    },
-    // isDeleted: {
-    //   type: Boolean,
-    //   default: false
-    // }
+    creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
   },
    { timestamps: true }
 )

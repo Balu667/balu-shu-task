@@ -1,43 +1,53 @@
-const addressModel = require("../models/addressModel")  // --> importing the internModel module
+const addressModel = require("../models/addressModel");
+const userModel = require("../models/userModel");
+const { validationResult } = require("express-validator");
 
 
+const getPlaces = async (req,res) => {
+    let places;
+    try{
+        places = await addressModel.find({});
+        res.status(200).json({status: true, data: places.map((user) => user.toObject({ getters: true })) });
+    }catch(err){
+      res.status(404).json({status:false,data : [], message:"no data found"})
+    }  
+}
 
-// ==> POST api : to create a college
-
-module.exports.createaddress = async function (req, res) {
-    try {
-        let data = req.body  
-        if (Object.keys(data).length === 0) 
-            return res.status(400).send({ status: false, message: "please enter the data" });
-
-        const {place, street, pin  } = data  
-
-
-       
-
-        // if (!isValid(name))  // --> name should be provided in the body
-        //     return res.status(400).send({ status: false, message: "Please enter the college name. ⚠️" })
-        // if (!data.name.match(nameRegex))  // --> name should be provided in right format
-        //     return res.status(400).send({ status: false, message: "name should contain alphabets only. ⚠️" })
-
-        // if (!isValid(fullName))  // --> fullName of the college should be provided in the body
-        //     return res.status(400).send({ status: false, message: "Please enter the fullName of the college. ⚠️" })
-        // if (!data.fullName.match(nameRegex))  // --> fullName should be provided in right format
-        //     return res.status(400).send({ status: false, message: "fullName can't be alphanumeric. ⚠️" })
-
-        // if (!isValid(logoLink))  // --> logoLink should be provided in the request body
-        //     return res.status(400).send({ status: false, message: "Please enter the logoLink. ⚠️" })
-        // if (!logoLink.match(linkRegex))  // --> logoLink should be provided in right format
-        //     return res.status(400).send({ status: false, message: "Please enter a valid URL. ⚠️" })
-
-        // let college = await userModel.findOne({ name: name })  // --> to check if that college name is already present in the database
-        // if (college)  // --> if college name already exists in the database
-        //     return res.status(400).send({ status: false, message: "This name is already used. ⚠️" })
-
-        // if that college doesn't exist in the database
-        let addressCreated = await addressModel.create(data)  
-        return res.status(201).send({ message:"address created sucessfully", status: true, data: addressCreated })  // --> to get the response
-    } catch (err) {
-        return res.status(500).send({ status: false, message: err.message })
+const createPlace = async (req,res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({status:false,message:"Invalid inputs, please check"})
+      return next(new HttpError("Invalid input fields, Please Check", 422));
     }
+    const {place,street,pin} = req.body;
+    console.log(req.headers.userid,"userid")
+    const newPlace = new addressModel({
+        place,
+        street,
+        pin,
+        creator:req.headers.userid
+    });
+
+    let user;
+      try{
+        user = await userModel.findById(req.headers.userid);
+    
+      }
+      
+    catch(err){
+        return res.status(500).json({status:false,message:"something went wrong, please try again"})
+    }
+    if(!user){
+        return res.status(400).json({status:false, message:"user was not found, please provide the correct id"})
+    } 
+        user.places.push(newPlace);
+        user.save()
+        console.log(user)
+    let address = addressModel.create(newPlace);
+    return res.status(201).send({ message:"place created sucessfully", status: true, data: newPlace })  // --> 
+}
+
+module.exports = {
+    createPlace,
+    getPlaces
 }
