@@ -20,10 +20,6 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     places: [{ type: Object, required: true, ref: "addresses" }],
-    // isDeleted: {
-    //   type: Boolean,
-    //   default: false
-    // }
   },
   { timestamps: true }
 );
