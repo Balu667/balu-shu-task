@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");  // --> mongoose module is imported
+const mongoose = require("mongoose"); // --> mongoose module is imported
 
 // to define a format (schema) for creating an intern in the database
 const addressSchema = new mongoose.Schema(
@@ -10,16 +10,14 @@ const addressSchema = new mongoose.Schema(
     street: {
       type: String,
       required: true,
-   
     },
     pin: {
       type: String,
       required: true,
-    
     },
-    creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
+    userId: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
   },
-   { timestamps: true }
-)
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("address", addressSchema); 
+module.exports = mongoose.model("address", addressSchema);

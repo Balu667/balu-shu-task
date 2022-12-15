@@ -1,11 +1,10 @@
-const{createPlace,getPlaces} = require("../controllers/addressController");
+const { createPlace, getPlaces } = require("../controllers/addressController");
+const { validatePlace } = require("../validators/validator");
 const { check } = require("express-validator");
-const express= require("express");
-const router=express.Router();
+const express = require("express");
+const router = express.Router();
 
-
-
-router.get("/places",getPlaces)
-router.post("/place",[check("place").exists(),check("street").exists(),check("pin").exists()], createPlace);
+router.get("/places", getPlaces);
+router.post("/place", validatePlace, createPlace);
 
 module.exports = router;

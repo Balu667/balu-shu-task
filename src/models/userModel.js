@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    places:  [{ type: mongoose.Types.ObjectId, required: true, ref: "addresses" }]
+    places: [{ type: Object, required: true, ref: "addresses" }],
     // isDeleted: {
     //   type: Boolean,
     //   default: false
