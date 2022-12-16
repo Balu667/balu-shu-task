@@ -5,13 +5,19 @@ const getUsers = async (req, res) => {
   let users;
   try {
     users = await userModel.find({});
-    res.status(200).json({
-      status: true,
-      data: users.map((user) => user.toObject({ getters: true })),
-    });
+    console.log(users,"users")
+   
   } catch (err) {
-    res.status(404).json({ status: false, data: [], message: "no data found" });
+   return res.status(500).json({ status: false,  message: "Internal server error" });
   }
+
+  if(users.length === 0){
+   return res.status(404).json({ status: false, message: "no data found" });
+  }
+  res.status(200).json({
+    status: true,
+    data: users.map((user) => user.toObject({ getters: true })),
+  });
 };
 
 const createUser = async (req, res) => {
